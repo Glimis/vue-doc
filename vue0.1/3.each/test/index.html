@@ -1,0 +1,35 @@
+<html>
+<head>
+  <title>test1</title>
+</head>
+<body>
+
+  <ul >
+    <li c-each="to in todos">
+          <span class="todo" c-text="title" ></span>   
+      </li>
+
+          <li c-each="to in todos">
+          <span class="todo" c-text="title" ></span>   
+      </li>
+  </ul>
+</body>
+<script type="text/javascript" src="dist/build.js"></script>
+<script type="text/javascript">
+  var data={
+    id:'我是id',
+    name:'我是name',
+    checked:'false',
+    todos:[{
+      title:'1'
+    },{
+      title:'2'
+    },{
+      title:'3'
+    }]
+  };
+  var d1=Date.now();
+  new Combo(document.body,data);
+  console.log(Date.now() - d1);
+</script>
+</html>

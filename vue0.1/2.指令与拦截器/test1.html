@@ -1,0 +1,114 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>test1</title>
+</head>
+<body >
+    <div c-text="id"></div>
+    <div c-text="name"></div>
+ <script type="text/javascript" src="https://lodash.com/vendor/cdn.jsdelivr.net/lodash/4.17.2/lodash.min.js"></script>   
+<script type="text/javascript">
+  var directivesMange={
+    'c-text':function(v,dom){
+      dom.textContent=v
+    },
+    'c-value':function(){
+      //..
+    }
+  }
+
+  var directivesKeys=_.keys(directivesMange);
+
+  function Combo (el, model){
+    var self=this;
+    //外层容器
+    this.el=el;
+    //需要初始化的vm
+    this.vm=model;
+    //vm相关的数据标记
+    this.vmdata=_.clone(model);
+
+    //获取相关节点
+    this.tokenDom=this.getRelyDom(el);
+    //解析节点
+    _.each(this.tokenDom,function(dom){
+      self.parseDom(dom);
+    })
+    
+    this.createVm();
+
+    //初始化
+    
+    _.each(this.vmdata,function(v,k){
+        self.vm[k]=v;
+    })
+  }
+
+  //通过属性获取不在通用,尤其是作用域无法处理
+  //只能遍历,此处输入el,方便迭代
+  Combo.prototype.getRelyDom=function(el){
+    var tokenDom=[];
+    var self=this;
+    var attrsKey=_.map(el.attributes,function(node){return node.name})
+    var attrs=_.intersection(directivesKeys,attrsKey);
+
+    if(attrs.length>0){
+      tokenDom.push({
+        el:el,
+        attrs:_.map(attrs,function(attrKey){
+          return {
+            key:attrKey,
+            val:el.getAttribute(attrKey)
+          }
+        })
+      })
+    }
+    
+    _.each(el.childNodes,function(child_node){
+        tokenDom=_.concat(tokenDom,self.getRelyDom(child_node))
+    })
+    
+    return tokenDom;
+  }
+
+
+  Combo.prototype.parseDom=function(elObj){
+    _.each(elObj.attrs,function(attrName){
+       attrName.fn=directivesMange[attrName.key];
+    })
+  }
+
+  Combo.prototype.createVm=function(){
+    for(var val in this.vm){
+      this.createVmAttr(val);
+    }
+  }
+  Combo.prototype.createVmAttr=function(key){
+    var self=this;
+
+    Object.defineProperty(this.vm, key, {
+      set: function (val) {
+            _.each(self.tokenDom,function(dom){
+              _.each(dom.attrs,function(attr){
+                if(attr.val==key){
+                  attr.fn(val,dom.el)
+                }
+              })
+            })
+            self.vmdata[key]=val;
+      },
+      get: function(){
+        return self.vmdata[key];
+      }
+    })
+  }
+
+
+  var data={
+    id:'我是id',
+    name:'我是name'
+  };
+  var co=new Combo(document.body,data);
+</script>
+</body>
+</html>

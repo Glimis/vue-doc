@@ -1,0 +1,74 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>test1</title>
+</head>
+<body>
+    <div>{{id}}</div>
+    <div>{{name}}</div>
+<script type="text/javascript">
+
+  function Combo (el, model){
+    this.el=el;
+    this.vm=model;
+    //vm经过get/set后,只有替换功能,无存储功能
+    //此处用vmdata对数据做存储
+    this.vmdata={};
+    //语法糖转换
+    this.sugarConvert();
+    this.getRelyDom();
+    this.createVm();
+  }
+
+  Combo.prototype.sugarConvert=function(){
+     this.el.innerHTML=this.el.innerHTML.replace(/\{\{(.*)\}\}/g, function(match,key){
+        return '<span c-text="'+key+'"></span>'
+     })
+  }
+  Combo.prototype.getRelyDom=function(){
+    var tokenDom=this.tokenDom={};
+    this.el.querySelectorAll('[c-text]').forEach(function(dom,i){
+      var key=dom.getAttribute('c-text');
+      //初始化结构
+      tokenDom[key]=tokenDom[key]||[];
+      tokenDom[key].push(dom);
+    })
+  }
+  Combo.prototype.createVm=function(){
+    for(var val in this.vm){
+      this.createVmAttr(val);
+    }
+  }
+  Combo.prototype.createVmAttr=function(key){
+    var self=this;
+    Object.defineProperty(this.vm, key, {
+      set: function (val) {
+            var doms= self.tokenDom[key]||[];
+            doms.forEach(function(dom){
+              dom.textContent=val
+            })
+            //vmdata不需要做初始化,初始化触发set函数即可
+            self.vmdata[key]=val;
+      },
+      get: function(){
+        return self.vmdata[key];
+      }
+    })
+  }
+
+
+  var data={
+    id:'我是id',
+    name:'我是name'
+  };
+  var co=new Combo(document.body,data)
+
+  var i=0;
+  setInterval(function(){
+    data.id='id变了'+i++;
+    data.name='name也是'+i;
+  },1000)
+
+</script>
+</body>
+</html>

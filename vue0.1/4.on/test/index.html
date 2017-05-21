@@ -1,0 +1,35 @@
+<html>
+<head>
+  <title>test1</title>
+</head>
+<body>
+
+   <button c-on="click click">点击</button>
+
+    <ul c-each="to in todos">
+        <li><span c-text="title"></span> <button c-on="click click">点击</button></li>  
+    </ul>
+  
+</body>
+<script type="text/javascript" src="dist/build.js"></script>
+<script type="text/javascript">
+  var data={
+    id:'我是id',
+    name:'我是name',
+    checked:'false',
+    todos:[{
+      title:'1'
+    },{
+      title:'2'
+    },{
+      title:'3'
+    }],
+    click:function(){
+      console.log(this);
+    }
+  };
+  var d1=Date.now();
+  new Combo(document.body,data);
+  console.log(Date.now() - d1);
+</script>
+</html>

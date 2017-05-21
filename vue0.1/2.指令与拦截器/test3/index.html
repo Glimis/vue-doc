@@ -1,0 +1,21 @@
+<html>
+<head>
+  <title>test2</title>
+</head>
+<body>
+  <input type="checkbox" c-checked="checked">
+  <div c-text="checked"></div>
+  <div c-text="id"></div>
+  <div c-text="id"></div>
+  <div c-text="name"></div>
+</body>
+<script type="text/javascript" src="dist/build.js"></script>
+<script type="text/javascript">
+  var data={
+    id:'我是id',
+    name:'我是name',
+    checked:'false'
+  };
+  new Combo(document.body,data);
+</script>
+</html>

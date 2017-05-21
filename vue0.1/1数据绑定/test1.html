@@ -1,0 +1,55 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>test1</title>
+</head>
+<body>
+    <div c-text='id'></div>
+    <div c-text='name'></div>
+<script type="text/javascript">
+
+  function Combo (el, model){
+    this.el=el;
+    this.getRelyDom();
+    this.setData(model);
+  }
+
+  Combo.prototype.getRelyDom=function(){
+    var tokenDom=this.tokenDom={};
+    this.el.querySelectorAll('[c-text]').forEach(function(dom,i){
+      var key=dom.getAttribute('c-text');
+      //初始化结构
+      tokenDom[key]=tokenDom[key]||[];
+      tokenDom[key].push(dom);
+    })
+  }
+
+  Combo.prototype.setData=function(data){
+    for(key in data){
+      this.setVal(key,data[key])
+    }
+  }
+
+  Combo.prototype.setVal=function(key,val){
+    var doms= this.tokenDom[key]||[];
+    doms.forEach(function(dom){
+      dom.textContent=val
+    })
+  }
+
+  var co=new Combo(document.body,{
+    id:'我是id',
+    name:'我是name'
+  })
+
+  var i=0;
+  setInterval(function(){
+    co.setData({
+      id:'id变了'+i++,
+      name:'name也是'+i
+    });
+  },1000)
+
+</script>
+</body>
+</html>
